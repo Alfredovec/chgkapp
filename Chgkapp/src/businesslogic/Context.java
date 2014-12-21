@@ -1,12 +1,13 @@
 package businesslogic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 import models.entities.Question;
 import models.requests.CHGKRandomRequest;
 
-public class Context 
+public class Context implements Serializable
 {
 	public ArrayList<Question> getRandomPackageCHGK(Date from, Date to, int complexity)
 	{

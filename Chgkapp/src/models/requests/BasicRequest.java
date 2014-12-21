@@ -1,8 +1,9 @@
 package models.requests;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public abstract class BasicRequest 
+public abstract class BasicRequest implements Serializable 
 {
 	private Date minDate;
 	

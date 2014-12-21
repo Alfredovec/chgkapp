@@ -1,8 +1,9 @@
 package models.requests;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class CHGKRandomRequest extends BasicRequest
+public class CHGKRandomRequest extends BasicRequest implements Serializable
 {
 	public CHGKRandomRequest(Date from, Date to, int complexity)
 	{
