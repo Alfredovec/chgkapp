@@ -17,9 +17,14 @@ public class CHGKRandomRequest extends BasicRequest implements Serializable
 		this.setComplexity(complexity);
 	}
 	
+	public CHGKRandomRequest() 
+	{
+	}
+
 	private int complexity;
 	
-	private String ToString()
+	@Override
+	public String toString()
 	{
 		Random rand = new Random();
 		String random = "";
