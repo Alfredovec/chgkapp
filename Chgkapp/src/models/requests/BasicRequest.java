@@ -5,6 +5,8 @@ import java.util.Date;
 
 public abstract class BasicRequest implements Serializable 
 {
+	private static final long serialVersionUID = 8029541479287789398L;
+
 	private Date minDate;
 	
 	private Date maxDate;
