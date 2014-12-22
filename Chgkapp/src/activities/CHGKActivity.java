@@ -1,5 +1,10 @@
 package activities;
 
+import java.util.ArrayList;
+
+import models.entities.Question;
+
+import businesslogic.Context;
 import ru.chgkapp.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -25,8 +30,10 @@ public class CHGKActivity extends Activity implements OnClickListener
 		switch (v.getId())
 		{
 		case R.id.buttonGetRandomCHGK:
+			Context context = new Context();
+			ArrayList<Question> list = context.getRandomPackageCHGK(null, null, 1);
 			Intent intent = new Intent(this, CHGKPackageActivity.class);
-			intent.putExtra("name", "2Л Харькова");
+			intent.putExtra("name", "test111");
 			startActivity(intent);
 			break;
 		}

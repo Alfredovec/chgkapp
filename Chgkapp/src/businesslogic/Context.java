@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -16,8 +17,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import ua.kture.pi1311.context.TrainContext.DownloadStationTask;
-
 import android.os.AsyncTask;
 
 import models.entities.Question;
@@ -27,13 +26,23 @@ public class Context implements Serializable
 {
 	String result;
 	
+	Question q;
+	
 	private static final long serialVersionUID = 3474846514992754866L;
 
 	public ArrayList<Question> getRandomPackageCHGK(Date from, Date to, int complexity)
 	{
 		CHGKRandomRequest request = new CHGKRandomRequest(from, to, complexity);
 		
-		String str_result = new DownloadRandomPackageTask().execute("http://178.150.137.228:8080/chgkapp/").get();
+		try {
+			String str_result = new DownloadRandomPackageTask().execute("http://178.150.137.228:8080/chgkapp/").get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return new ArrayList<Question>();
 	}
@@ -43,7 +52,7 @@ public class Context implements Serializable
         protected String doInBackground(String... urls) 
         {
             try {
-                return downloadStationUrl(urls[0]);
+                return downloadRandomPackageUrl(urls[0]);
             } catch (IOException e) {
                 return "Unable to retrieve web page. URL may be invalid.";
             }
@@ -51,12 +60,12 @@ public class Context implements Serializable
         @Override
         protected void onPostExecute(String result) { }
     }
-    private String downloadStationUrl(String myurl) throws IOException 
+    private String downloadRandomPackageUrl(String myurl) throws IOException 
     {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost("http://178.150.137.228:8080/chgkapp/");
 	    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-	    params.add(new BasicNameValuePair("method", "1"));
+	    params.add(new BasicNameValuePair("method", "2"));
 	    CHGKRandomRequest request = new CHGKRandomRequest();
 	    params.add(new BasicNameValuePair("link", request.toString()));
 	    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
@@ -66,7 +75,7 @@ public class Context implements Serializable
 	    ObjectInputStream in = new ObjectInputStream(entity.getContent());
 	    try 
 	    {
-               result = (String)in.readObject();
+               q = (Question)in.readObject();
         } 
 	    catch (ClassNotFoundException e) 
 	    {
