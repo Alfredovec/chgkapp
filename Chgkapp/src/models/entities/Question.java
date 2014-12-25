@@ -22,6 +22,8 @@ public class Question implements Serializable
 	
 	private String answer;
 	
+	private String passCriteria;
+	
 	private String authors;
 	
 	private String sources;
@@ -92,6 +94,14 @@ public class Question implements Serializable
 
 	public void setAnswer(String answer) {
 		this.answer = answer;
+	}
+
+	public String getPassCriteria() {
+		return passCriteria;
+	}
+
+	public void setPassCriteria(String passCriteria) {
+		this.passCriteria = passCriteria;
 	}
 
 	public String getAuthors() {

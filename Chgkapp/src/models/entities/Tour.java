@@ -1,9 +1,8 @@
 package models.entities;
 
 import java.util.ArrayList;
-import java.util.Date;
 
-public class Tournament 
+public class Tour 
 {
 	private int id;
 	
@@ -19,22 +18,10 @@ public class Tournament
 	
 	private String type;
 	
-	private String info;
-	
-	private String URL;
-	
 	private String fileName;
 	
-	private String editors;
-	
-	private Date lastUpdated;
-	
-	private Date playedAt;
-	
-	private Date createdAt;
+	private ArrayList<Question> questions;
 
-	private ArrayList<Tour> tours;
-	
 	public int getId() {
 		return id;
 	}
@@ -91,22 +78,6 @@ public class Tournament
 		this.type = type;
 	}
 
-	public String getInfo() {
-		return info;
-	}
-
-	public void setInfo(String info) {
-		this.info = info;
-	}
-
-	public String getURL() {
-		return URL;
-	}
-
-	public void setURL(String uRL) {
-		URL = uRL;
-	}
-
 	public String getFileName() {
 		return fileName;
 	}
@@ -115,43 +86,11 @@ public class Tournament
 		this.fileName = fileName;
 	}
 
-	public String getEditors() {
-		return editors;
+	public ArrayList<Question> getQuestions() {
+		return questions;
 	}
 
-	public void setEditors(String editors) {
-		this.editors = editors;
-	}
-
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
-
-	public void setLastUndated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
-
-	public Date getPlayedAt() {
-		return playedAt;
-	}
-
-	public void setPlayedAt(Date playedAt) {
-		this.playedAt = playedAt;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public ArrayList<Tour> getTours() {
-		return tours;
-	}
-
-	public void setTours(ArrayList<Tour> tours) {
-		this.tours = tours;
+	public void setQuestions(ArrayList<Question> questions) {
+		this.questions = questions;
 	}
 }
