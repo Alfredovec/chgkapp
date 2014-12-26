@@ -1,10 +1,13 @@
 package models.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Tournament 
+public class Tournament implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private int id;
 	
 	private int parentId;

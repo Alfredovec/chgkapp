@@ -31,7 +31,7 @@ public class CHGKActivity extends Activity implements OnClickListener
 		{
 		case R.id.buttonGetRandomCHGK:
 			Context context = new Context();
-			ArrayList<Question> list = context.getRandomPackageCHGK(null, null, 1);
+			//ArrayList<Question> list = context.getRandomPackageCHGK(null, null, 1);
 			Intent intent = new Intent(this, CHGKPackageActivity.class);
 			intent.putExtra("name", "test111");
 			startActivity(intent);

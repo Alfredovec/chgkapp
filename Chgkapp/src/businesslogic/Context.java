@@ -14,12 +14,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.SerializableEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.os.AsyncTask;
 
 import models.entities.Question;
+import models.entities.Tour;
 import models.requests.CHGKRandomRequest;
 
 public class Context implements Serializable
@@ -28,14 +30,21 @@ public class Context implements Serializable
 	
 	Question q;
 	
+	Tour resultTour;
+	
+	CHGKRandomRequest request;
+	
 	private static final long serialVersionUID = 3474846514992754866L;
 
-	public ArrayList<Question> getRandomPackageCHGK(Date from, Date to, int complexity)
+	public Tour getRandomPackageCHGK(Date from, Date to, int complexity)
 	{
-		CHGKRandomRequest request = new CHGKRandomRequest(from, to, complexity);
+		request = new CHGKRandomRequest(from, to, complexity);
+		
+		String s = "http://db.chgk.info/random/from_"+ request.getMinDate().getYear()+"-"+request.getMinDate().getMonth()+"-"+request.getMinDate().getDay()+"/to_"+request.getMaxDate().getYear()+"-"+request.getMaxDate().getMonth()+"-"+
+				request.getMaxDate().getDay()+"/types1/complexity1"+100000000+"/limit1";
 		
 		try {
-			String str_result = new DownloadRandomPackageTask().execute("http://178.150.137.228:8080/chgkapp/").get();
+			String str_result = new DownloadRandomPackageTask().execute("http://kharkiv-trainss.rhcloud.com/chgkapp/").get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,10 +53,11 @@ public class Context implements Serializable
 			e.printStackTrace();
 		}
 		
-		return new ArrayList<Question>();
+		return resultTour;
 	}
 	
-	private class DownloadRandomPackageTask extends AsyncTask<String, Void, String> {
+	private class DownloadRandomPackageTask extends AsyncTask<String, Void, String> 
+	{
         @Override
         protected String doInBackground(String... urls) 
         {
@@ -60,14 +70,16 @@ public class Context implements Serializable
         @Override
         protected void onPostExecute(String result) { }
     }
-    private String downloadRandomPackageUrl(String myurl) throws IOException 
+    
+	private String downloadRandomPackageUrl(String myurl) throws IOException 
     {
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("http://178.150.137.228:8080/chgkapp/");
+        HttpPost httppost = new HttpPost("http://kharkiv-trainss.rhcloud.com/chgkapp/");
 	    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-	    params.add(new BasicNameValuePair("method", "2"));
+	    params.add(new BasicNameValuePair("method", "3"));
 	    CHGKRandomRequest request = new CHGKRandomRequest();
 	    params.add(new BasicNameValuePair("link", request.toString()));
+	    httppost.setEntity(new SerializableEntity(request, false));
 	    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 	    HttpResponse response = httpclient.execute(httppost);
 	    HttpEntity entity = response.getEntity();
@@ -75,7 +87,7 @@ public class Context implements Serializable
 	    ObjectInputStream in = new ObjectInputStream(entity.getContent());
 	    try 
 	    {
-               q = (Question)in.readObject();
+               resultTour = (Tour)in.readObject();
         } 
 	    catch (ClassNotFoundException e) 
 	    {
@@ -84,4 +96,5 @@ public class Context implements Serializable
 	    in.close();
 	    return "1";
    }
+
 }
