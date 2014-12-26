@@ -23,7 +23,9 @@ public class MainActivity extends Activity implements OnClickListener
 	{
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.mainscreen);
-	    
+
+        //This is Android Studio, bitch!
+
 	    Date from = new Date();
 	    from.setDate(10);
 	    from.setMonth(10);
