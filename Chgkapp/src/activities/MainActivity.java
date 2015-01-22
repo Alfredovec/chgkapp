@@ -1,58 +1,84 @@
+/*
+ * Copyright 2012 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package activities;
 
-import java.util.ArrayList;
-import java.util.Date;
-
-import models.entities.Question;
-import models.entities.Tour;
-
-import businesslogic.Context;
-
-import ru.chgkapp.R;
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-public class MainActivity extends Activity implements OnClickListener
-{
+import java.util.Date;
+
+import businesslogic.Context;
+import ru.chgkapp.R;
+
+/**
+ * The launchpad activity for this sample project. This activity launches other activities that
+ * demonstrate implementations of common animations.
+ */
+public class MainActivity extends ListActivity {
+    /**
+     * This class describes an individual sample (the sample title, and the activity class that
+     * demonstrates this sample).
+     */
+    private class Sample {
+        private CharSequence title;
+        private Class<? extends Activity> activityClass;
+
+        public Sample(int titleResId, Class<? extends Activity> activityClass) {
+            this.activityClass = activityClass;
+            this.title = getResources().getString(titleResId);
+        }
+
+        @Override
+        public String toString() {
+            return title.toString();
+        }
+    }
+
+    /**
+     * The collection of all samples in the app. This gets instantiated in {@link
+     * #onCreate(android.os.Bundle)} because the {@link activities.MainActivity.Sample} constructor needs access to {@link
+     * android.content.res.Resources}.
+     */
+    private static Sample[] mSamples;
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Instantiate the list of samples.
+        mSamples = new Sample[]
+        {
+                new Sample(R.string.title_game, GameActivity.class),
+        };
+
+        setListAdapter(new ArrayAdapter<Sample>(this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1,
+                mSamples));
+    }
+
     @Override
-	protected void onCreate(Bundle savedInstanceState) 
-	{
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.mainscreen);
-
-        //This is Android Studio, bitch!
-
-	    Date from = new Date();
-	    from.setDate(10);
-	    from.setMonth(10);
-	    from.setYear(2000);
-	    
-	    Date to = new Date();
-	    to.setDate(10);
-	    to.setMonth(10);
-	    to.setYear(2010);
-	    
-	    Context context = new Context();
-	    Tour tour = context.getRandomPackageCHGK(from, to, 1);
-	    
-	    
-	    Button b = (Button) findViewById(R.id.buttonCHGK);
-	    b.setOnClickListener(this);
-	}
-
-	@Override
-	public void onClick(View v) 
-	{
-		switch (v.getId())
-		{
-		case R.id.buttonCHGK:
-			Intent intent = new Intent(this, CHGKActivity.class);
-			startActivity(intent);
-			break;
-		}
-	}
+    protected void onListItemClick(ListView listView, View view, int position, long id) {
+        // Launch the sample associated with this list position.
+        startActivity(new Intent(MainActivity.this, mSamples[position].activityClass));
+    }
 }

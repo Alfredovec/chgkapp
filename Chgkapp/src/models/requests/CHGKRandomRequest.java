@@ -32,8 +32,8 @@ public class CHGKRandomRequest extends BasicRequest implements Serializable
 		{
 			random += String.valueOf(rand.nextInt(10));
 		}
-		return "http://db.chgk.info/random/from_1990-01-02/to_2014-12-21/types1/complexity1/" +
-				random + "/limit1";
+		return "http://db.chgk.info/random/from_2000-10-6/to_2010-10-4/types1/complexity1/" +
+				"9999999999" + "/limit1";
 	}
 
 	public int getComplexity() 

@@ -14,12 +14,15 @@
   limitations under the License.
   -->
 
-<resources>
-    <style name="DarkTheme" parent="android:Theme.Holo">
-        <item name="android:actionBarStyle">@style/DarkActionBar</item>
-    </style>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="DarkActionBar" parent="android:Widget.Holo.ActionBar">
-        <item name="android:background">@android:color/transparent</item>
-    </style>
-</resources>
+    <!-- Adds an item to the list. -->
+    <item android:id="@+id/action_previous"
+        android:title="@string/action_previous"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/action_answer"
+        android:title="@string/action_answer"
+        android:showAsAction="always" />
+
+</menu>

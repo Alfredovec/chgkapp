@@ -44,7 +44,8 @@ public class Context implements Serializable
 				request.getMaxDate().getDay()+"/types1/complexity1"+100000000+"/limit1";
 		
 		try {
-			String str_result = new DownloadRandomPackageTask().execute("http://kharkiv-trainss.rhcloud.com/chgkapp/").get();
+			//String str_result = new DownloadRandomPackageTask().execute("http://178.150.137.228:8080/chgkapp/").get();
+            String str_result = new DownloadRandomPackageTask().execute("http://kharkiv-trainss.rhcloud.com/chgkapp/").get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -75,21 +76,34 @@ public class Context implements Serializable
     {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost("http://kharkiv-trainss.rhcloud.com/chgkapp/");
+        //HttpPost httppost = new HttpPost("http://178.150.137.228:8080/chgkapp/");
 	    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-	    params.add(new BasicNameValuePair("method", "3"));
-	    CHGKRandomRequest request = new CHGKRandomRequest();
-	    params.add(new BasicNameValuePair("link", request.toString()));
+	    //params.add(new BasicNameValuePair("method", "1"));
+        params.add(new BasicNameValuePair("method", "14"));
+        //String s = request.toString();
+	    //params.add(new BasicNameValuePair("link", s));
+        //CHGKRandomRequest request = null;
 	    httppost.setEntity(new SerializableEntity(request, false));
-	    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-	    HttpResponse response = httpclient.execute(httppost);
+        httppost.setHeader("type", "CHGKRequest");
+//	    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+        HttpResponse response;
+        try {
+            response = httpclient.execute(httppost);
+        }
+        catch (Exception e)
+        {
+            int a = 5;
+            response = null;
+        }
 	    HttpEntity entity = response.getEntity();
  
 	    ObjectInputStream in = new ObjectInputStream(entity.getContent());
-	    try 
+	    try
 	    {
-               resultTour = (Tour)in.readObject();
+            resultTour = (Tour) in.readObject();
+            int a;
         } 
-	    catch (ClassNotFoundException e) 
+	    catch (Exception e)
 	    {
                e.printStackTrace();
         }
