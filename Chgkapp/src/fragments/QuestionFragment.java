@@ -11,20 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import activities.GameSlideItem;
 import models.entities.Question;
 import ru.chgkapp.R;
 
 /**
  * A fragment representing the front of the card.
  */
-public class CardFrontFragment extends Fragment {
+public class QuestionFragment extends Fragment {
 
     private Question question;
 
-    public CardFrontFragment()
+    public QuestionFragment()
     {
 
     }
@@ -40,8 +38,8 @@ public class CardFrontFragment extends Fragment {
                              Bundle savedInstanceState)
     {
 
-        View view = inflater.inflate(R.layout.questionscreen, null);
-        TextView tw = (TextView) view.findViewById(R.id.textView);
+        View view = inflater.inflate(R.layout.question, null);
+        TextView tw = (TextView) view.findViewById(R.id.textViewQuestion);
         ScrollView sv = (ScrollView) view.findViewById(R.id.scrollView3);
 
         tw.setText(question.getQuestion());

@@ -21,8 +21,4 @@
         android:title="@string/action_previous"
         android:showAsAction="always" />
 
-    <item android:id="@+id/action_answer"
-        android:title="@string/action_answer"
-        android:showAsAction="always" />
-
 </menu>

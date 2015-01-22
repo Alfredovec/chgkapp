@@ -71,7 +71,7 @@ public class MainActivity extends ListActivity {
         };
 
         setListAdapter(new ArrayAdapter<Sample>(this,
-                android.R.layout.simple_list_item_1,
+                R.layout.list_item_menu,
                 android.R.id.text1,
                 mSamples));
     }

@@ -1,5 +1,7 @@
 package models.entities;
  
+import android.graphics.Picture;
+
 import java.io.Serializable;
  
 public class Question implements Serializable
@@ -31,6 +33,10 @@ public class Question implements Serializable
         private String comments;
        
         private int complexity;
+
+        private String material;
+
+        private Picture picture;
  
         public int getQuestionId() {
                 return questionId;
@@ -135,4 +141,20 @@ public class Question implements Serializable
         public void setComplexity(int complexity) {
                 this.complexity = complexity;
         }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+
+    public Picture getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Picture picture) {
+        this.picture = picture;
+    }
 }

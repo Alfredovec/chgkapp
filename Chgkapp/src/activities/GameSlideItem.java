@@ -16,53 +16,46 @@
 
 package activities;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import fragments.CardBackFragment;
-import fragments.CardFrontFragment;
+import fragments.AnswerFragment;
+import fragments.QuestionFragment;
 import models.entities.Question;
 import ru.chgkapp.R;
 
-/**
- * A fragment representing a single step in a wizard. The fragment shows a dummy title indicating
- * the page number, along with some dummy text.
- *
- * <p>This class is used by the {@link CardFlipActivity} and {@link
- * ScreenSlideActivity} samples.</p>
- */
-public class GameSlideItem extends Fragment {
+public class GameSlideItem extends Fragment implements View.OnClickListener
+{
     /**
      * The argument key for the page number this fragment represents.
      */
     public boolean mShowingBack = false;
     private Question question;
+    private ViewGroup rootView;
 
     public static final String ARG_PAGE = "page";
+    public static final String QUEST_NUM = "questNum";
 
     /**
      * The fragment's page number, which is set to the argument value for {@link #ARG_PAGE}.
      */
     private int mPageNumber;
+    private int questionsNum;
 
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
      */
-    public static GameSlideItem create(int pageNumber, Question question)
+    public static GameSlideItem create(int pageNumber, int questionsNum, Question question)
     {
         GameSlideItem fragment = new GameSlideItem();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, pageNumber);
+        args.putInt(QUEST_NUM, questionsNum);
         args.putSerializable("question", question);
         fragment.setArguments(args);
         return fragment;
@@ -75,9 +68,10 @@ public class GameSlideItem extends Fragment {
     {
         super.onCreate(savedInstanceState);
         mPageNumber = getArguments().getInt(ARG_PAGE);
+        questionsNum = getArguments().getInt(QUEST_NUM);
         question = (Question) getArguments().getSerializable("question");
 
-        CardFrontFragment card = new CardFrontFragment();
+        QuestionFragment card = new QuestionFragment();
         Bundle args = new Bundle();
         args.putSerializable("question", question);
         card.setArguments(args);
@@ -93,10 +87,25 @@ public class GameSlideItem extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout containing a title and body text.
-        ViewGroup rootView = (ViewGroup) inflater
+        rootView = (ViewGroup) inflater
                 .inflate(R.layout.game_slide_page, container, false);
 
-        //mShowingBack = false;
+        Button button = (Button) rootView.findViewById(R.id.buttonAnsQuest);
+        button.setOnClickListener(this);
+
+        TextView twPrev = (TextView) rootView.findViewById(R.id.textViewPrev);
+        if (mPageNumber > 0)
+            twPrev.setText(String.valueOf(mPageNumber));
+        else twPrev.setVisibility(View.INVISIBLE);
+
+        TextView twCurr = (TextView) rootView.findViewById(R.id.textViewCurr);
+        twCurr.setText("Вопрос " + String.valueOf(mPageNumber + 1) + " из " + String.valueOf(questionsNum));
+
+        TextView twNext = (TextView) rootView.findViewById(R.id.textViewNext);
+        if (mPageNumber < questionsNum - 1)
+            twNext.setText(String.valueOf(mPageNumber + 2));
+        else twNext.setVisibility(View.INVISIBLE);
+
         return rootView;
     }
 
@@ -109,7 +118,7 @@ public class GameSlideItem extends Fragment {
 
     public void flipCard() {
         Fragment fragment;
-        fragment = mShowingBack ? new CardFrontFragment() : new CardBackFragment();
+        fragment = mShowingBack ? new QuestionFragment() : new AnswerFragment();
 
         Bundle args = new Bundle();
         args.putSerializable("question", question);
@@ -141,6 +150,28 @@ public class GameSlideItem extends Fragment {
 
                         // Commit the transaction.
                 .commit();
+    }
+
+    public void InvalidateButton()
+    {
+        Button button = (Button) rootView.findViewById(R.id.buttonAnsQuest);
+        button.setText(getResources().getString(R.string.to_answer));
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.buttonAnsQuest:
+                this.flipCard();
+                Button button = (Button) rootView.findViewById(R.id.buttonAnsQuest);
+                if (button.getText() == getResources().getString(R.string.to_answer))
+                    button.setText(getResources().getString(R.string.to_question));
+                else
+                    button.setText(getResources().getString(R.string.to_answer));
+        }
+
     }
 }
 
