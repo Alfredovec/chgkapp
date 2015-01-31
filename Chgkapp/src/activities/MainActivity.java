@@ -18,15 +18,24 @@ package activities;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import businesslogic.Context;
+import models.entities.Tour;
+import models.entities.Tournament;
 import ru.chgkapp.R;
 
 /**
@@ -34,6 +43,7 @@ import ru.chgkapp.R;
  * demonstrate implementations of common animations.
  */
 public class MainActivity extends ListActivity {
+
     /**
      * This class describes an individual sample (the sample title, and the activity class that
      * demonstrates this sample).
@@ -59,6 +69,7 @@ public class MainActivity extends ListActivity {
      * android.content.res.Resources}.
      */
     private static Sample[] mSamples;
+    ProgressDialog progressDialog;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,17 +79,83 @@ public class MainActivity extends ListActivity {
         mSamples = new Sample[]
         {
                 new Sample(R.string.title_game, GameActivity.class),
+                new Sample(R.string.title_game, GameActivity.class),
+                new Sample(R.string.title_game, GameActivity.class),
+                new Sample(R.string.title_game, GameActivity.class),
+                new Sample(R.string.title_game, GameActivity.class),
+                new Sample(R.string.title_game, GameActivity.class)
         };
 
-        setListAdapter(new ArrayAdapter<Sample>(this,
+        ArrayAdapter<Sample> adapter = new ArrayAdapter<Sample>(this,
                 R.layout.list_item_menu,
                 android.R.id.text1,
-                mSamples));
+                mSamples)
+        {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent)
+            {
+                View view = super.getView(position, convertView, parent);
+                ImageButton ib = (ImageButton) view.findViewById(R.id.delete_button);
+                ib.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getContext(), "azaza", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return view;
+            }
+        };
+
+        setListAdapter(adapter);
+
     }
 
+    Intent intent;
+
+    private void azaza()
+    {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    int a = 4;
+                    while(a == 2)
+                        sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
+    }
     @Override
-    protected void onListItemClick(ListView listView, View view, int position, long id) {
-        // Launch the sample associated with this list position.
-        startActivity(new Intent(MainActivity.this, mSamples[position].activityClass));
+    protected void onListItemClick(ListView listView, View view, int position, long id)
+    {
+        intent = new Intent();
+        intent = new Intent(MainActivity.this, mSamples[position].activityClass);
+
+        Date from = new Date();
+        from.setDate(10);
+        from.setMonth(10);
+        from.setYear(2000);
+
+        Date to = new Date();
+        to.setDate(10);
+        to.setMonth(10);
+        to.setYear(2010);
+
+        Context context = new Context();
+        Tour tour = new Tour();
+        for (int i = 0; i < 10 && tour.getQuestionsNum() == 0; i++)
+            tour = context.getRandomPackageCHGK(from, to, 1);
+
+        Tournament tournament = new Tournament();
+        for (int i = 0; i < 10 && tournament.getQuestionsNum() == 0; i++)
+            tournament = context.getTournamentByTourName(tour.getFileName());
+
+        intent.putExtra("tour", tour);
+        intent.putExtra("tournament", tournament);
+
+        startActivity(intent);
     }
 }

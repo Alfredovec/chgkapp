@@ -21,7 +21,9 @@
     android:showDividers="middle"
     android:divider="?android:dividerVertical"
     android:dividerPadding="8dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:clickable="false"
+    android:descendantFocusability="blocksDescendants">
 
     <!-- Dummy text view that will display the name of a random country. -->
     <TextView android:id="@android:id/text1"
@@ -29,13 +31,15 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:paddingLeft="?android:listPreferredItemPaddingLeft" />
+        android:paddingLeft="?android:listPreferredItemPaddingLeft"/>
 
     <!-- A button that, when pressed, will delete this list item row from its container. -->
     <ImageButton android:id="@+id/delete_button"
         android:layout_width="48dp"
         android:layout_height="match_parent"
         android:src="@drawable/ic_list_remove"
-        android:background="@android:drawable/ic_menu_manage" />
+        android:background="@android:drawable/ic_menu_manage"
+        android:clickable="true"
+        android:nestedScrollingEnabled="false" />
 
 </LinearLayout>

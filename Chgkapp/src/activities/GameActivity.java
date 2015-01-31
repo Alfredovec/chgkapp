@@ -18,8 +18,10 @@ import android.view.ViewGroup;
 import java.util.Date;
 
 import businesslogic.Context;
+import businesslogic.ContextRandomCHGK;
 import fragments.QuestionFragment;
 import models.entities.Tour;
+import models.entities.Tournament;
 import ru.chgkapp.R;
 
 
@@ -28,6 +30,7 @@ public class GameActivity extends FragmentActivity
     private static int NUM_PAGES;
 
     private Tour tour;
+    private Tournament tournament;
     private ViewPager mPager;
     private int currentItemNum;
     private GamePagerAdapter mPagerAdapter;
@@ -39,22 +42,11 @@ public class GameActivity extends FragmentActivity
 
         currentItemNum = 0;
 
-        Date from = new Date();
-        from.setDate(10);
-        from.setMonth(10);
-        from.setYear(2000);
+        Bundle extras = getIntent().getExtras();
+        tour = (Tour) extras.getSerializable("tour");
+        tournament = (Tournament) extras.getSerializable("tournament");
 
-        Date to = new Date();
-        to.setDate(10);
-        to.setMonth(10);
-        to.setYear(2010);
-
-        Context context = new Context();
-        tour = new Tour();
-        for (int i = 0; i < 10 && tour.getQuestionsNum() == 0; i++)
-            tour = context.getRandomPackageCHGK(from, to, 1);
-
-        NUM_PAGES = tour.getQuestionsNum();
+        NUM_PAGES = tour.getQuestionsNum() + 1;
 
         //Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.game_pager);
@@ -64,22 +56,26 @@ public class GameActivity extends FragmentActivity
             @Override
             public void onPageSelected(int position)
             {
-                Fragment fragment = mPagerAdapter.getRegisteredFragment(currentItemNum);
-                GameSlideItem item = (GameSlideItem) fragment;
-                FragmentTransaction ft = item.getChildFragmentManager().beginTransaction();
+                if (currentItemNum != 0)
+                {
+                    Fragment fragment = mPagerAdapter.getRegisteredFragment(currentItemNum);
 
-                QuestionFragment fragmentCard = new QuestionFragment();
-                item.mShowingBack = false;
-                Bundle args = new Bundle();
-                args.putSerializable("question", tour.getQuestions().get(currentItemNum));
-                fragmentCard.setArguments(args);
+                    GameSlideItem item = (GameSlideItem) fragment;
+                    FragmentTransaction ft = item.getChildFragmentManager().beginTransaction();
 
-                ft.replace(R.id.answer_question_container, fragmentCard);
-                ft.commit();
+                    QuestionFragment fragmentCard = new QuestionFragment();
+                    item.mShowingBack = false;
+                    Bundle args = new Bundle();
+                    args.putSerializable("question", tour.getQuestions().get(currentItemNum - 1));
+                    fragmentCard.setArguments(args);
 
-                item.InvalidateButton();
+                    ft.replace(R.id.answer_question_container, fragmentCard);
+                    ft.commit();
 
-                currentItemNum = position;
+                    item.InvalidateButton();
+                }
+
+                currentItemNum = position % NUM_PAGES;
 
                 invalidateOptionsMenu();
             }
@@ -97,7 +93,7 @@ public class GameActivity extends FragmentActivity
         // Add either a "next" or "finish" button to the action bar, depending on which page
         // is currently selected.
         MenuItem item = menu.add(Menu.NONE, R.id.action_next, Menu.NONE,
-                (mPager.getCurrentItem() == mPagerAdapter.getCount() - 1)
+                (currentItemNum == NUM_PAGES - 1)
                         ? R.string.action_finish
                         : R.string.action_next);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -142,28 +138,33 @@ public class GameActivity extends FragmentActivity
         @Override
         public Fragment getItem(int position)
         {
-            return GameSlideItem.create(position, NUM_PAGES, tour.getQuestions().get(position));
+            if (position == 0)
+                return TournamentInfoItem.create(tournament);
+            else
+                return GameSlideItem.create(position, NUM_PAGES - 1, tour.getQuestions().get(position - 1));
         }
 
         @Override
         public int getCount()
         {
-            return NUM_PAGES;
+            return Integer.MAX_VALUE;
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position)
         {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            registeredFragments.put(position, fragment);
+            int virtualPosition = position % NUM_PAGES;
+            Fragment fragment = (Fragment) super.instantiateItem(container, virtualPosition);
+            registeredFragments.put(virtualPosition, fragment);
             return fragment;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object)
         {
-            registeredFragments.remove(position);
-            super.destroyItem(container, position, object);
+            int virtualPosition = position % NUM_PAGES;
+            registeredFragments.remove(virtualPosition);
+            super.destroyItem(container, virtualPosition, object);
         }
 
         public Fragment getRegisteredFragment(int position)

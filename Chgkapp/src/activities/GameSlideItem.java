@@ -94,16 +94,16 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
         button.setOnClickListener(this);
 
         TextView twPrev = (TextView) rootView.findViewById(R.id.textViewPrev);
-        if (mPageNumber > 0)
-            twPrev.setText(String.valueOf(mPageNumber));
+        if (mPageNumber > 1)
+            twPrev.setText(String.valueOf(mPageNumber - 1));
         else twPrev.setVisibility(View.INVISIBLE);
 
         TextView twCurr = (TextView) rootView.findViewById(R.id.textViewCurr);
-        twCurr.setText("Вопрос " + String.valueOf(mPageNumber + 1) + " из " + String.valueOf(questionsNum));
+        twCurr.setText("Вопрос " + String.valueOf(mPageNumber) + " из " + String.valueOf(questionsNum));
 
         TextView twNext = (TextView) rootView.findViewById(R.id.textViewNext);
-        if (mPageNumber < questionsNum - 1)
-            twNext.setText(String.valueOf(mPageNumber + 2));
+        if (mPageNumber < questionsNum)
+            twNext.setText(String.valueOf(mPageNumber + 1));
         else twNext.setVisibility(View.INVISIBLE);
 
         return rootView;

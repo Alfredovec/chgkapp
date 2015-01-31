@@ -37,6 +37,8 @@ public class Tournament implements Serializable
 	private Date createdAt;
 
 	private ArrayList<Tour> tours;
+
+    private int toursNum;
 	
 	public int getId() {
 		return id;
@@ -157,4 +159,8 @@ public class Tournament implements Serializable
 	public void setTours(ArrayList<Tour> tours) {
 		this.tours = tours;
 	}
+
+    public int getToursNum() { return toursNum; }
+
+    public void setToursNum(int toursNum) { this.toursNum = toursNum; }
 }
