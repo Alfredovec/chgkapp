@@ -28,20 +28,37 @@ public class ContextTournamentCHGK
     Tournament resultTournament;
     String tourName;
 
-    public Tournament get(String tourName)
-    {
+    public Tournament get(String tourName) throws IOException, ClassNotFoundException {
         this.tourName = tourName;
-        try
-        {
-            //String str_result = new DownloadRandomPackageTask().execute("http://178.150.137.228:8080/chgkapp/").get();
-            String str_result = new DownloadTask().execute("http://kharkiv-trainss.rhcloud.com/chgkapp/").get();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
+        HttpClient httpclient = new DefaultHttpClient();
+
+        HttpPost httppost = new HttpPost("http://kharkiv-trainss.rhcloud.com/chgkapp/");
+        //HttpPost httppost = new HttpPost("http://178.150.137.228:8080/chgkapp/");
+
+        httppost.setEntity(new SerializableEntity(tourName, false));
+        httppost.setHeader("type", "getTournamentByTourName");
+
+        HttpResponse response = httpclient.execute(httppost);
+
+        HttpEntity entity = response.getEntity();
+
+        ObjectInputStream in = new ObjectInputStream(entity.getContent());
+        resultTournament = (Tournament) in.readObject();
+
+        in.close();
+
+//        try
+//        {
+//            //String str_result = new DownloadRandomPackageTask().execute("http://178.150.137.228:8080/chgkapp/").get();
+//            String str_result = new DownloadTask().execute("http://kharkiv-trainss.rhcloud.com/chgkapp/").get();
+//        } catch (InterruptedException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 
         return resultTournament;
     }

@@ -17,23 +17,32 @@
 package activities;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import businesslogic.Context;
+import models.entities.Question;
 import models.entities.Tour;
 import models.entities.Tournament;
 import ru.chgkapp.R;
@@ -99,7 +108,8 @@ public class MainActivity extends ListActivity {
                 ib.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getContext(), "azaza", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), RandomPreferenceActivity.class);
+                        startActivity(intent);
                     }
                 });
                 return view;
@@ -109,53 +119,161 @@ public class MainActivity extends ListActivity {
         setListAdapter(adapter);
 
     }
+    Tour tour;
+    Tournament tournament;
 
-    Intent intent;
-
-    private void azaza()
-    {
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    int a = 4;
-                    while(a == 2)
-                        sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.start();
-    }
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id)
     {
-        intent = new Intent();
-        intent = new Intent(MainActivity.this, mSamples[position].activityClass);
+        tour = new Tour();
+        tournament = new Tournament();
 
-        Date from = new Date();
-        from.setDate(10);
-        from.setMonth(10);
-        from.setYear(2000);
+        DownloadRandomTask task = new DownloadRandomTask(this);
+        task.execute();
+    }
+    public class DownloadRandomTask extends AsyncTask<Void, Void, Tour>
+    {
+        ProgressDialog pd;
+        Activity activity;
 
-        Date to = new Date();
-        to.setDate(10);
-        to.setMonth(10);
-        to.setYear(2010);
+        public DownloadRandomTask(Activity activity)
+        {
+            pd = new ProgressDialog(activity);
+            this.activity = activity;
+        }
 
-        Context context = new Context();
-        Tour tour = new Tour();
-        for (int i = 0; i < 10 && tour.getQuestionsNum() == 0; i++)
-            tour = context.getRandomPackageCHGK(from, to, 1);
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            pd.setTitle("Случайный пакет ЧГК");
+            pd.setMessage("Загрузка пакета...");
+            pd.show();
+        }
 
-        Tournament tournament = new Tournament();
-        for (int i = 0; i < 10 && tournament.getQuestionsNum() == 0; i++)
-            tournament = context.getTournamentByTourName(tour.getFileName());
+        @Override
+        protected Tour doInBackground(Void... params)
+        {
+            Tour tour = new Tour();
+            try
+            {
+                Context context = new Context();
 
-        intent.putExtra("tour", tour);
-        intent.putExtra("tournament", tournament);
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+                boolean isCustom = sp.getBoolean("dateSwitcher", false);
+                Integer complexity = Integer.parseInt(sp.getString("complexity", "1"));
 
-        startActivity(intent);
+                String fromStr;
+                String toStr;
+                if (isCustom)
+                {
+                    fromStr = sp.getString("dateFrom", "1990.00.01");
+                    toStr = sp.getString("dateTo", "2015.00.01");
+                }
+                else
+                {
+                    fromStr = "1990.00.01";
+                    toStr = "2015.00.01";
+                }
+
+                SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
+                Date from = format.parse(fromStr);
+                Date to = format.parse(toStr);
+
+                tour = context.getRandomPackageCHGK(from, to, complexity);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return tour;
+        }
+
+        @Override
+        protected void onPostExecute(Tour result)
+        {
+            tour = result;
+
+            if (pd.isShowing())
+            {
+                pd.dismiss();
+            }
+
+            if (tour.getQuestionsNum() == 0)
+            {
+                DownloadRandomTask task = new DownloadRandomTask(activity);
+                task.execute();
+                return;
+            }
+
+//            boolean neinteresno = true;
+//            for (Question question : tour.getQuestions())
+//            {
+//                neinteresno &= question.getPictureAnswer() == null;
+//            }
+//
+//            if (neinteresno)
+//            {
+//                DownloadRandomTask task = new DownloadRandomTask(activity);
+//                task.execute();
+//                return;
+//            }
+
+            DownloadTournamentRandomTask task2 = new DownloadTournamentRandomTask(activity);
+            task2.execute(tour.getFileName());
+        }
+    }
+
+    public class DownloadTournamentRandomTask extends AsyncTask<String, Void, Tournament>
+    {
+        ProgressDialog pd;
+
+        public DownloadTournamentRandomTask(Activity activity)
+        {
+            pd = new ProgressDialog(activity);
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            pd.setTitle("Случайный пакет ЧГК");
+            pd.setMessage("Загрузка информации о турнире...");
+            pd.show();
+        }
+
+        @Override
+        protected Tournament doInBackground(String... params)
+        {
+            try
+            {
+                Context context = new Context();
+
+                tournament = context.getTournamentByTourName(params[0]);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return tournament;
+        }
+
+        @Override
+        protected void onPostExecute(Tournament result)
+        {
+            tournament = result;
+
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
+
+            Intent intent = new Intent(MainActivity.this, mSamples[0].activityClass);
+
+            intent.putExtra("tour", tour);
+            intent.putExtra("tournament", tournament);
+
+
+            startActivity(intent);
+        }
     }
 }

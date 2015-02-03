@@ -19,6 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 import android.os.AsyncTask;
 
 import models.entities.Tour;
+import models.entities.Tournament;
 import models.requests.CHGKRandomRequest;
 
 public class ContextRandomCHGK
@@ -26,22 +27,38 @@ public class ContextRandomCHGK
 	Tour resultTour;
 	CHGKRandomRequest request;
 
-	public Tour get (Date from, Date to, int complexity)
-	{
-		//request = new CHGKRandomRequest(from, to, complexity, 5, 25);
-        request = new CHGKRandomRequest(from, to, complexity);
+	public Tour get (Date from, Date to, int complexity) throws IOException, ClassNotFoundException
+    {
+		request = new CHGKRandomRequest(from, to, complexity, 5, 25);
+        HttpClient httpclient = new DefaultHttpClient();
 
-		try
-        {
-			//String str_result = new DownloadRandomPackageTask().execute("http://178.150.137.228:8080/chgkapp/").get();
-            String str_result = new DownloadTask().execute("http://kharkiv-trainss.rhcloud.com/chgkapp/").get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        HttpPost httppost = new HttpPost("http://kharkiv-trainss.rhcloud.com/chgkapp/");
+        //HttpPost httppost = new HttpPost("http://178.150.137.228:8080/chgkapp/");
+
+        httppost.setEntity(new SerializableEntity(request, false));
+        httppost.setHeader("type", "CHGKRequest");
+
+        HttpResponse response = httpclient.execute(httppost);
+
+        HttpEntity entity = response.getEntity();
+
+        ObjectInputStream in = new ObjectInputStream(entity.getContent());
+
+        resultTour = (Tour) in.readObject();
+
+        in.close();
+
+//		try
+//      {
+//			//String str_result = new DownloadRandomPackageTask().execute("http://178.150.137.228:8080/chgkapp/").get();
+//            String str_result = new DownloadTask().execute("http://kharkiv-trainss.rhcloud.com/chgkapp/").get();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		return resultTour;
 	}
@@ -60,7 +77,14 @@ public class ContextRandomCHGK
 	    HttpEntity entity = response.getEntity();
 
 	    ObjectInputStream in = new ObjectInputStream(entity.getContent());
-        resultTour = (Tour) in.readObject();
+        try
+        {
+            resultTour = (Tour) in.readObject();
+        }
+        catch (Exception e)
+        {
+            int a = 5;
+        }
 
         in.close();
 	    return "1";

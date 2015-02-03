@@ -43,7 +43,6 @@ public class QuestionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-
         View view = inflater.inflate(R.layout.question, null);
         TextView twQuestion = (TextView) view.findViewById(R.id.textViewQuestion);
         TextView materialTitle = (TextView) view.findViewById(R.id.materialTitle);
@@ -56,7 +55,7 @@ public class QuestionFragment extends Fragment {
         materialTitle.setVisibility(View.GONE);
 
 //        if(question.getPictureQuestion() != null)
-        if (question.getPicture() != null)
+        if (question.getPictureQuestion() != null)
         {
             materialTitle.setVisibility(View.VISIBLE);
             materialImage.setVisibility(View.VISIBLE);
@@ -72,7 +71,7 @@ public class QuestionFragment extends Fragment {
             opt.inDither = true;
             opt.inPreferredConfig = Bitmap.Config.ARGB_8888;
             //byte[] imageByteArray = question.getPictureQuestion();
-            byte[] imageByteArray = question.getPicture();
+            byte[] imageByteArray = question.getPictureQuestion();
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length, opt);
             materialImage.setImageBitmap(bitmap);
 

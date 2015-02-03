@@ -8,13 +8,13 @@ public class Question implements Serializable
 
     private int questionId;
 
-    private int parentNumber;
+    private int parentId;
 
     private int number;
 
     private String type;
 
-    private int typenum;
+    private int typeNum;
 
     private String textId;
 
@@ -34,11 +34,9 @@ public class Question implements Serializable
 
     private String material;
 
-//    private byte[] pictureQuestion;
-//
-//    private byte[] pictureAnswer;
+    private byte[] pictureQuestion;
 
-    private byte[] picture;
+    private byte[] pictureAnswer;
 
     public int getQuestionId() {
             return questionId;
@@ -48,12 +46,12 @@ public class Question implements Serializable
             this.questionId = questionId;
     }
 
-    public int getParentNumber() {
-            return parentNumber;
+    public int getParentId() {
+            return parentId;
     }
 
-    public void setParentNumber(int parentNumber) {
-            this.parentNumber = parentNumber;
+    public void setParentId(int parentId) {
+            this.parentId = parentId;
     }
 
     public int getNumber() {
@@ -72,12 +70,12 @@ public class Question implements Serializable
             this.type = type;
     }
 
-    public int getTypenum() {
-            return typenum;
+    public int getTypeNum() {
+            return typeNum;
     }
 
-    public void setTypenum(int typenum) {
-            this.typenum = typenum;
+    public void setTypeNum(int typeNum) {
+            this.typeNum = typeNum;
     }
 
     public String getTextId() {
@@ -152,27 +150,19 @@ public class Question implements Serializable
         this.material = material;
     }
 
-//    public byte[] getPictureQuestion() {
-//        return pictureQuestion;
-//    }
-//
-//    public void setPictureQuestion(byte[] pictureQuestion) {
-//        this.pictureQuestion = pictureQuestion;
-//    }
-//
-//    public byte[] getPictureAnswer() {
-//        return pictureAnswer;
-//    }
-//
-//    public void setPictureAnswer(byte[] pictureAnswer) {
-//        this.pictureAnswer = pictureAnswer;
-//    }
-
-    public byte[] getPicture() {
-        return picture;
+    public byte[] getPictureQuestion() {
+        return pictureQuestion;
     }
 
-    public void setPicture(byte[] picture) {
-        this.picture = picture;
+    public void setPictureQuestion(byte[] pictureQuestion) {
+        this.pictureQuestion = pictureQuestion;
+    }
+
+    public byte[] getPictureAnswer() {
+        return pictureAnswer;
+    }
+
+    public void setPictureAnswer(byte[] pictureAnswer) {
+        this.pictureAnswer = pictureAnswer;
     }
 }

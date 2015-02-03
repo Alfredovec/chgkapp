@@ -8,33 +8,25 @@ public class CHGKRandomRequest extends BasicRequest implements Serializable
 {
 	private static final long serialVersionUID = -2412658681398053698L;
 
-//	public CHGKRandomRequest(Date from, Date to, int complexity, int minQuestions, int MaxQuestions)
-//	{
-//		if (from != null)
-//			this.setMinDate(from);
-//		if (to != null)
-//			this.setMaxDate(to);
-//		this.setComplexity(complexity);
-//        this.setMinQuestions(minQuestions);
-//        this.setMaxQuestions(maxQuestions);
-//	}
-    public CHGKRandomRequest(Date from, Date to, int complexity)
-    {
-        if (from != null)
-            this.setMinDate(from);
-        if (to != null)
-            this.setMaxDate(to);
-        this.setComplexity(complexity);
-    }
+	public CHGKRandomRequest(Date from, Date to, int complexity, int minQuestions, int maxQuestions)
+	{
+		if (from != null)
+			this.setMinDate(from);
+		if (to != null)
+			this.setMaxDate(to);
+		this.setComplexity(complexity);
+        this.setMinQuestions(minQuestions);
+        this.setMaxQuestions(maxQuestions);
+	}
 	public CHGKRandomRequest() 
 	{
 	}
 
 	private int complexity;
 
-//    private int minQuestions;
-//
-//    private int maxQuestions;
+    private int minQuestions;
+
+    private int maxQuestions;
 	
 	@Override
 	public String toString()
@@ -59,19 +51,19 @@ public class CHGKRandomRequest extends BasicRequest implements Serializable
 		this.complexity = complexity;
 	}
 
-//    public int getMinQuestions() {
-//        return minQuestions;
-//    }
-//
-//    public void setMinQuestions(int minQuestions) {
-//        this.minQuestions = minQuestions;
-//    }
-//
-//    public int getMaxQuestions() {
-//        return maxQuestions;
-//    }
-//
-//    public void setMaxQuestions(int maxQuestions) {
-//        this.maxQuestions = maxQuestions;
-//    }
+    public int getMinQuestions() {
+        return minQuestions;
+    }
+
+    public void setMinQuestions(int minQuestions) {
+        this.minQuestions = minQuestions;
+    }
+
+    public int getMaxQuestions() {
+        return maxQuestions;
+    }
+
+    public void setMaxQuestions(int maxQuestions) {
+        this.maxQuestions = maxQuestions;
+    }
 }

@@ -7,45 +7,45 @@ import java.util.Date;
 public class Tournament implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	
-	private int id;
-	
+
+	private int tournamentId;
+
 	private int parentId;
-	
+
 	private String title;
-	
+
 	private int number;
-	
+
 	private String textId;
-	
+
 	private int questionsNum;
-	
+
 	private String type;
-	
+
 	private String info;
-	
+
 	private String URL;
-	
+
 	private String fileName;
-	
+
 	private String editors;
-	
+
 	private Date lastUpdated;
-	
+
 	private Date playedAt;
-	
+
 	private Date createdAt;
 
 	private ArrayList<Tour> tours;
 
     private int toursNum;
-	
-	public int getId() {
-		return id;
+
+	public int getTournamentId() {
+		return tournamentId;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setTournamentId(int tournamentId) {
+		this.tournamentId = tournamentId;
 	}
 
 	public int getParentId() {
