@@ -15,10 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
-import java.util.Date;
-
-import businesslogic.Context;
-import businesslogic.ContextRandomCHGK;
 import fragments.QuestionFragment;
 import models.entities.Tour;
 import models.entities.Tournament;

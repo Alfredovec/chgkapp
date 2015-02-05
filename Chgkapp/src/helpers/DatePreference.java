@@ -34,6 +34,8 @@ import android.widget.DatePicker;
 public class DatePreference extends DialogPreference implements
         DatePicker.OnDateChangedListener {
     private String dateString;
+    private long minDate;
+    private long maxDate;
     private String changedValueCanBeNull;
     private DatePicker datePicker;
 
@@ -59,6 +61,18 @@ public class DatePreference extends DialogPreference implements
         datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH), this);
         datePicker.setCalendarViewShown(false);
+
+        if (this.maxDate == 0)
+            datePicker.setMaxDate(System.currentTimeMillis() + 10000);
+        else
+            datePicker.setMaxDate(maxDate);
+
+        if (this.minDate == 0) {
+            Date min = new Date(1990 - 1900, 0, 1);
+            datePicker.setMinDate(min.getTime());
+        }
+        else
+            datePicker.setMinDate(minDate);
         return datePicker;
     }
 
@@ -254,6 +268,16 @@ public class DatePreference extends DialogPreference implements
         }
     }
 
+    public void setMinDate(long time)
+    {
+        this.minDate = time + 86401000;
+    }
+
+    public void setMaxDate(long time)
+    {
+        this.maxDate = time - 1000;
+    }
+
     private static class SavedState extends BaseSavedState {
         String dateValue;
 
@@ -283,4 +307,16 @@ public class DatePreference extends DialogPreference implements
             }
         };
     }
+
+    public void setMaxDefault()
+    {
+        Calendar c = Calendar.getInstance();
+        this.setTheDate(DatePreference.formatter().format(c.getTime()));
+    }
+
+    public void setMinDefault()
+    {
+        this.setTheDate("1990.01.01");
+    }
+
 }

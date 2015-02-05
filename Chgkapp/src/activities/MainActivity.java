@@ -17,32 +17,28 @@
 package activities;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import businesslogic.Context;
-import models.entities.Question;
+import businesslogic.AppContext;
 import models.entities.Tour;
 import models.entities.Tournament;
 import ru.chgkapp.R;
@@ -119,17 +115,24 @@ public class MainActivity extends ListActivity {
         setListAdapter(adapter);
 
     }
-    Tour tour;
-    Tournament tournament;
 
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id)
     {
-        tour = new Tour();
-        tournament = new Tournament();
-
-        DownloadRandomTask task = new DownloadRandomTask(this);
-        task.execute();
+        try {
+            if (isOnline()) {
+                DownloadRandomTask task = new DownloadRandomTask(this);
+                task.execute();
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "Проверьте соединение с сетью", Toast.LENGTH_SHORT).show();
+            }
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+        }
     }
     public class DownloadRandomTask extends AsyncTask<Void, Void, Tour>
     {
@@ -157,7 +160,7 @@ public class MainActivity extends ListActivity {
             Tour tour = new Tour();
             try
             {
-                Context context = new Context();
+                AppContext appContext = new AppContext();
 
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
                 boolean isCustom = sp.getBoolean("dateSwitcher", false);
@@ -180,7 +183,7 @@ public class MainActivity extends ListActivity {
                 Date from = format.parse(fromStr);
                 Date to = format.parse(toStr);
 
-                tour = context.getRandomPackageCHGK(from, to, complexity);
+                tour = appContext.getRandomPackageCHGK(from, to, complexity);
             }
             catch (Exception e)
             {
@@ -192,14 +195,12 @@ public class MainActivity extends ListActivity {
         @Override
         protected void onPostExecute(Tour result)
         {
-            tour = result;
-
             if (pd.isShowing())
             {
                 pd.dismiss();
             }
 
-            if (tour.getQuestionsNum() == 0)
+            if (result == null || result.getQuestionsNum() == 0)
             {
                 DownloadRandomTask task = new DownloadRandomTask(activity);
                 task.execute();
@@ -219,18 +220,20 @@ public class MainActivity extends ListActivity {
 //                return;
 //            }
 
-            DownloadTournamentRandomTask task2 = new DownloadTournamentRandomTask(activity);
-            task2.execute(tour.getFileName());
+            DownloadTournamentRandomTask tournamentRandomTask = new DownloadTournamentRandomTask(activity, result);
+            tournamentRandomTask.execute();
         }
     }
 
-    public class DownloadTournamentRandomTask extends AsyncTask<String, Void, Tournament>
+    public class DownloadTournamentRandomTask extends AsyncTask<Void, Void, Tournament>
     {
         ProgressDialog pd;
+        Tour tour;
 
-        public DownloadTournamentRandomTask(Activity activity)
+        public DownloadTournamentRandomTask(Activity activity, Tour tour)
         {
             pd = new ProgressDialog(activity);
+            this.tour = tour;
         }
 
         @Override
@@ -243,16 +246,13 @@ public class MainActivity extends ListActivity {
         }
 
         @Override
-        protected Tournament doInBackground(String... params)
+        protected Tournament doInBackground(Void... params)
         {
-            try
-            {
-                Context context = new Context();
-
-                tournament = context.getTournamentByTourName(params[0]);
-            }
-            catch (Exception e)
-            {
+            Tournament tournament = null;
+            try {
+                AppContext appContext = new AppContext();
+                tournament = appContext.getTournamentByTourName(tour.getFileName());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return tournament;
@@ -261,8 +261,6 @@ public class MainActivity extends ListActivity {
         @Override
         protected void onPostExecute(Tournament result)
         {
-            tournament = result;
-
             if (pd.isShowing()) {
                 pd.dismiss();
             }
@@ -270,10 +268,20 @@ public class MainActivity extends ListActivity {
             Intent intent = new Intent(MainActivity.this, mSamples[0].activityClass);
 
             intent.putExtra("tour", tour);
-            intent.putExtra("tournament", tournament);
+            intent.putExtra("tournament", result);
 
+//            DataManager dataManager = new DataManager(getApplicationContext());
+//            dataManager.SaveTour(tour);
+//            Tour newTour = dataManager.LoadTour(tour.getTourId());
 
             startActivity(intent);
         }
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

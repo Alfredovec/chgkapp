@@ -34,7 +34,7 @@ public class TourAdapter
                     + "parentid integer,"
                     + "title text,"
                     + "number integer,"
-                    + "textid integer,"
+                    + "textid text,"
                     + "questionsnum integer,"
                     + "type text,"
                     + "filename text"+ ");";

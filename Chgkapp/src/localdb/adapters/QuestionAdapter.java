@@ -42,7 +42,7 @@ public class QuestionAdapter
                     + "number integer,"
                     + "type text,"
                     + "typenum integer,"
-                    + "textid integer,"
+                    + "textid text,"
                     + "question text,"
                     + "answer text,"
                     + "passcriteria text,"
