@@ -2,34 +2,29 @@ package businesslogic;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.SerializableEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
 import android.os.AsyncTask;
 
+import helpers.enums.GameType;
 import models.entities.Tour;
-import models.entities.Tournament;
-import models.requests.CHGKRandomRequest;
+import models.requests.RandomRequest;
 
 public class ContextRandomCHGK
 {
 	Tour resultTour;
-	CHGKRandomRequest request;
+	RandomRequest request;
 
 	public Tour get (Date from, Date to, int complexity) throws IOException, ClassNotFoundException
     {
-		request = new CHGKRandomRequest(from, to, complexity, 5, 25);
+		request = new RandomRequest(GameType.CHGK, from, to, complexity, 5, 25);
         HttpClient httpclient = new DefaultHttpClient();
 
         HttpPost httppost = new HttpPost("http://kharkiv-trainss.rhcloud.com/chgkapp/");
