@@ -3,7 +3,7 @@ package models.entities;
 /**
  * Created by Sergey on 17.02.2015.
  */
-public class SvoyakQuestion extends Question
+public class SvoyakTheme extends Question
 {
     private String themeName;
 
