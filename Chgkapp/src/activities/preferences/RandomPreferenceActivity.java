@@ -1,4 +1,4 @@
-package activities;
+package activities.preferences;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

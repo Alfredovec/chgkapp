@@ -30,19 +30,6 @@ public class RandomRequest extends BasicRequest implements Serializable
     private int minQuestions;
 
     private int maxQuestions;
-	
-	@Override
-	public String toString()
-	{
-		Random rand = new Random();
-		String random = "";
-		for (int i = 0; i < 10; i++)
-		{
-			random += String.valueOf(rand.nextInt(10));
-		}
-		return "http://db.chgk.info/random/from_2000-10-6/to_2010-10-4/types1/complexity1/" +
-				"9999999999" + "/limit1";
-	}
 
 	public int getComplexity() 
 	{

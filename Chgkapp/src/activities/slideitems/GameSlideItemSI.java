@@ -1,20 +1,4 @@
-/*
- * Copyright 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package activities;
+package activities.slideitems;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -25,11 +9,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import fragments.AnswerFragment;
+import fragments.AnswerFragmentSI;
 import fragments.QuestionFragment;
+import fragments.QuestionFragmentSI;
 import models.entities.Question;
 import ru.chgkapp.R;
 
-public class GameSlideItem extends Fragment implements View.OnClickListener
+/**
+ * Created by Sergey on 18.02.2015.
+ */
+public class GameSlideItemSI extends Fragment implements View.OnClickListener
 {
     /**
      * The argument key for the page number this fragment represents.
@@ -50,9 +39,9 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
      */
-    public static GameSlideItem create(int pageNumber, int questionsNum, Question question)
+    public static GameSlideItemSI create(int pageNumber, int questionsNum, Question question)
     {
-        GameSlideItem fragment = new GameSlideItem();
+        GameSlideItemSI fragment = new GameSlideItemSI();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, pageNumber);
         args.putInt(QUEST_NUM, questionsNum);
@@ -61,7 +50,7 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
         return fragment;
     }
 
-    public GameSlideItem() { }
+    public GameSlideItemSI() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -71,14 +60,14 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
         questionsNum = getArguments().getInt(QUEST_NUM);
         question = (Question) getArguments().getSerializable("question");
 
-        QuestionFragment card = new QuestionFragment();
+        QuestionFragmentSI card = new QuestionFragmentSI();
         Bundle args = new Bundle();
         args.putSerializable("question", question);
         card.setArguments(args);
 
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.answer_question_container, card)
+                .replace(R.id.answer_question_container_si, card)
                 .commit();
     }
 
@@ -88,20 +77,20 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
 
         // Inflate the layout containing a title and body text.
         rootView = (ViewGroup) inflater
-                .inflate(R.layout.game_slide_page, container, false);
+                .inflate(R.layout.game_slide_page_si, container, false);
 
-        Button button = (Button) rootView.findViewById(R.id.buttonAnsQuest);
+        Button button = (Button) rootView.findViewById(R.id.buttonAnsQuestSI);
         button.setOnClickListener(this);
 
-        TextView twPrev = (TextView) rootView.findViewById(R.id.textViewPrev);
+        TextView twPrev = (TextView) rootView.findViewById(R.id.textViewPrevSI);
         if (mPageNumber > 1)
             twPrev.setText(String.valueOf(mPageNumber - 1));
         else twPrev.setVisibility(View.INVISIBLE);
 
-        TextView twCurr = (TextView) rootView.findViewById(R.id.textViewCurr);
+        TextView twCurr = (TextView) rootView.findViewById(R.id.textViewCurrSI);
         twCurr.setText("Вопрос " + String.valueOf(mPageNumber) + " из " + String.valueOf(questionsNum));
 
-        TextView twNext = (TextView) rootView.findViewById(R.id.textViewNext);
+        TextView twNext = (TextView) rootView.findViewById(R.id.textViewNextSI);
         if (mPageNumber < questionsNum)
             twNext.setText(String.valueOf(mPageNumber + 1));
         else twNext.setVisibility(View.INVISIBLE);
@@ -118,7 +107,7 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
 
     public void flipCard() {
         Fragment fragment;
-        fragment = mShowingBack ? new QuestionFragment() : new AnswerFragment();
+        fragment = mShowingBack ? new QuestionFragmentSI() : new AnswerFragmentSI();
 
         Bundle args = new Bundle();
         args.putSerializable("question", question);
@@ -145,8 +134,8 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
                         // Replace any fragments currently in the container view with a fragment
                         // representing the next page (indicated by the just-incremented currentPage
                         // variable).
-                .replace(R.id.answer_question_container, new Fragment())
-                .replace(R.id.answer_question_container, fragment)
+                .replace(R.id.answer_question_container_si, new Fragment())
+                .replace(R.id.answer_question_container_si, fragment)
 
                         // Commit the transaction.
                 .commit();
@@ -154,8 +143,8 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
 
     public void InvalidateButton()
     {
-        Button button = (Button) rootView.findViewById(R.id.buttonAnsQuest);
-        button.setText(getResources().getString(R.string.to_answer));
+        Button button = (Button) rootView.findViewById(R.id.buttonAnsQuestSI);
+        button.setText(getResources().getString(R.string.to_answers));
     }
 
     @Override
@@ -163,15 +152,14 @@ public class GameSlideItem extends Fragment implements View.OnClickListener
     {
         switch (v.getId())
         {
-            case R.id.buttonAnsQuest:
+            case R.id.buttonAnsQuestSI:
                 this.flipCard();
-                Button button = (Button) rootView.findViewById(R.id.buttonAnsQuest);
-                if (button.getText() == getResources().getString(R.string.to_answer))
-                    button.setText(getResources().getString(R.string.to_question));
+                Button button = (Button) rootView.findViewById(R.id.buttonAnsQuestSI);
+                if (button.getText() == getResources().getString(R.string.to_answers))
+                    button.setText(getResources().getString(R.string.to_questions));
                 else
-                    button.setText(getResources().getString(R.string.to_answer));
+                    button.setText(getResources().getString(R.string.to_answers));
         }
 
     }
 }
-

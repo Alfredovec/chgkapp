@@ -10,15 +10,14 @@ import models.entities.Question;
  */
 public class Parser
 {
-    public static ArrayList<Question> parseSvoyakQuestions(String themeQuestions, String themeAnswers,
-                                                           String themeComments, String themeSources)
+    public static ArrayList<Question> parseSvoyakQuestions(Question theme)
     {
         ArrayList<Question> questions = new ArrayList<Question>();
 
-//        String themeQuestions = theme.getQuestion();
-//        String themeAnswers = theme.getAnswer();
-//        String themeComments = theme.getComments();
-//        String themeSources = theme.getSources();
+        String themeQuestions = theme.getQuestion();
+        String themeAnswers = theme.getAnswer();
+        String themeComments = theme.getComments();
+        String themeSources = theme.getSources();
 
         // Questions
         String temp = "";

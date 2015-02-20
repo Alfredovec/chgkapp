@@ -15,6 +15,24 @@ public abstract class BasicRequest implements Serializable
 	
 	private Date maxDate;
 
+    public String toString()
+    {
+        switch (this.type)
+        {
+            case BK:
+                return "BKRequest";
+            case CHGK:
+                return "CHGKRequest";
+            case BR:
+                return "BRRequest";
+            case SI:
+                return "SIRequest";
+            default:
+                return "Unknown";
+
+        }
+    }
+
 	public Date getMinDate() 
 	{
 		return minDate;

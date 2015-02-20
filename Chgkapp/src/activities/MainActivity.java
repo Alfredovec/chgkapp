@@ -34,12 +34,13 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import activities.preferences.RandomPreferenceActivity;
 import businesslogic.AppContext;
 import helpers.Parser;
+import helpers.enums.GameType;
 import models.entities.Tour;
 import models.entities.Tournament;
 import ru.chgkapp.R;
@@ -81,29 +82,15 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Parser.parseSvoyakQuestions("1. Восход солнца над старым аванпортом в Гавре произвел неизгладимое впечатление" +
-                " не только на ЭТОГО ХУДОЖНИКА, но и на всю мировую живопись. 2. ОН стал 'первым днем для русской кисти'," +
-                " по словам Евгения Баратынского. 3. Странная конструкция из человеческих рук и ног, находящаяся в центре" +
-                " ЭТОЙ КАРТИНЫ, своей формой напоминает очертание Испании. 4. Во время работы над ЭТОЙ КАРТИНОЙ художник" +
-                " использовал следующее описание изображенной героини: 'Персты рук твоих тонкостны, очи твои молниеносны," +
-                " и кидаешься ты на врагов аки лев'. 5. В 1844 году ОН совершил путешествие по Большой западной железной дороге." +
-                " Путешествовать пришлось не только в хорошую погоду.", "1. [Клод] Моне. 2. \"Последний день Помпеи\". 3." +
-                " \"Предчувствие гражданской войны\". 4. \"Боярыня Морозова\". 5. [Уильям] Тёрнер.", "1. Имеется в виду картина" +
-                " \"Восход солнца. Впечатление\", положившая начало импрессионизму. 5. Под впечатлением от поездки была написана картина" +
-                " \"Дождь, пар и скорость\".", "1. http://ru.wikipedia.org/wiki/Впечатление._Восходящее_солнце 2." +
-                " http://ru.wikipedia.org/wiki/Последний_день_Помпеи 3. " +
-                "http://ru.wikipedia.org/wiki/Мягкая_конструкция_с_варёными_бобами_(Предчувствие_гражданской_войны) 4. " +
-                "http://ru.wikipedia.org/wiki/Боярыня_Морозова 5. http://ru.wikipedia.org/wiki/Дождь,_пар_и_скорость");
-
         // Instantiate the list of samples.
         mSamples = new Sample[]
         {
-                new Sample(R.string.title_game, GameActivity.class),
-                new Sample(R.string.title_game, GameActivity.class),
-                new Sample(R.string.title_game, GameActivity.class),
-                new Sample(R.string.title_game, GameActivity.class),
-                new Sample(R.string.title_game, GameActivity.class),
-                new Sample(R.string.title_game, GameActivity.class)
+                new Sample(R.string.title_game, GameActivityCHGK.class),
+                new Sample(R.string.title_game, GameActivityCHGK.class),
+                new Sample(R.string.title_game, GameActivityCHGK.class),
+                new Sample(R.string.title_game, GameActivityCHGK.class),
+                new Sample(R.string.title_game, GameActivityCHGK.class),
+                new Sample(R.string.title_game, GameActivityCHGK.class)
         };
 
         ArrayAdapter<Sample> adapter = new ArrayAdapter<Sample>(this,
@@ -198,7 +185,7 @@ public class MainActivity extends ListActivity {
                 Date from = format.parse(fromStr);
                 Date to = format.parse(toStr);
 
-                tour = appContext.getRandomPackageCHGK(from, to, complexity);
+                tour = appContext.getRandomPackageCHGK(GameType.CHGK, from, to, complexity);
             }
             catch (Exception e)
             {

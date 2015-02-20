@@ -33,7 +33,7 @@ public class AnswerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.answer, container, false);
+        View view = inflater.inflate(R.layout.fragment_chgk_answer, container, false);
 
         StyleSpan bold = new StyleSpan(android.graphics.Typeface.BOLD);
 

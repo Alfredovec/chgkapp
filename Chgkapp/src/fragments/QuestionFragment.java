@@ -43,7 +43,7 @@ public class QuestionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.question, null);
+        View view = inflater.inflate(R.layout.fragment_chgk_question, null);
         TextView twQuestion = (TextView) view.findViewById(R.id.textViewQuestion);
         TextView materialTitle = (TextView) view.findViewById(R.id.materialTitle);
         TextView materialText = (TextView) view.findViewById(R.id.materialText);

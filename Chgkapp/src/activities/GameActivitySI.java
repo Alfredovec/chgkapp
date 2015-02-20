@@ -1,6 +1,5 @@
 package activities;
 
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -15,13 +14,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
+import activities.slideitems.GameSlideItemCHGK;
+import activities.slideitems.GameSlideItemSI;
 import fragments.QuestionFragment;
+import fragments.QuestionFragmentSI;
 import models.entities.Tour;
 import models.entities.Tournament;
 import ru.chgkapp.R;
 
-
-public class GameActivity extends FragmentActivity
+/**
+ * Created by Sergey on 18.02.2015.
+ */
+public class GameActivitySI extends FragmentActivity
 {
     private static int NUM_PAGES;
 
@@ -56,16 +60,16 @@ public class GameActivity extends FragmentActivity
                 {
                     Fragment fragment = mPagerAdapter.getRegisteredFragment(currentItemNum);
 
-                    GameSlideItem item = (GameSlideItem) fragment;
+                    GameSlideItemCHGK item = (GameSlideItemCHGK) fragment;
                     FragmentTransaction ft = item.getChildFragmentManager().beginTransaction();
 
-                    QuestionFragment fragmentCard = new QuestionFragment();
+                    QuestionFragmentSI fragmentCard = new QuestionFragmentSI();
                     item.mShowingBack = false;
                     Bundle args = new Bundle();
                     args.putSerializable("question", tour.getQuestions().get(currentItemNum - 1));
                     fragmentCard.setArguments(args);
 
-                    ft.replace(R.id.answer_question_container, fragmentCard);
+                    ft.replace(R.id.answer_question_container_si, fragmentCard);
                     ft.commit();
 
                     item.InvalidateButton();
@@ -112,12 +116,6 @@ public class GameActivity extends FragmentActivity
             case R.id.action_next:
                 mPager.setCurrentItem(mPager.getCurrentItem() + 1);
                 return true;
-
-//            case R.id.action_answer:
-//                Fragment fragment = mPagerAdapter.getRegisteredFragment(mPager.getCurrentItem());
-//                GameSlideItem GSItem = (GameSlideItem) fragment;
-//                GSItem.flipCard();
-//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -137,7 +135,7 @@ public class GameActivity extends FragmentActivity
             if (position == 0)
                 return TournamentInfoItem.create(tournament);
             else
-                return GameSlideItem.create(position, NUM_PAGES - 1, tour.getQuestions().get(position - 1));
+                return GameSlideItemSI.create(position, NUM_PAGES - 1, tour.getQuestions().get(position - 1));
         }
 
         @Override
