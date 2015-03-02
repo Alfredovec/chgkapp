@@ -119,7 +119,7 @@ public class Question implements Serializable
     }
 
     public String getSources() {
-            return sources;
+            return sources != null? sources : "";
     }
 
     public void setSources(String sources) {

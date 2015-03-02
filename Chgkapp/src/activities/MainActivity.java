@@ -19,14 +19,9 @@ package activities;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -34,15 +29,11 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import activities.preferences.RandomPreferenceActivity;
-import businesslogic.AppContext;
-import helpers.Parser;
-import helpers.enums.GameType;
-import models.entities.Tour;
-import models.entities.Tournament;
+import activities.preferences.RandomCHGKPreferenceActivity;
+import activities.preferences.RandomSIPreferenceActivity;
+import helpers.HelpMethods;
+import helpers.tasks.DownloadRandomCHGKTask;
+import helpers.tasks.DownloadRandomSITask;
 import ru.chgkapp.R;
 
 /**
@@ -85,12 +76,8 @@ public class MainActivity extends ListActivity {
         // Instantiate the list of samples.
         mSamples = new Sample[]
         {
-                new Sample(R.string.title_game, GameActivityCHGK.class),
-                new Sample(R.string.title_game, GameActivityCHGK.class),
-                new Sample(R.string.title_game, GameActivityCHGK.class),
-                new Sample(R.string.title_game, GameActivityCHGK.class),
-                new Sample(R.string.title_game, GameActivityCHGK.class),
-                new Sample(R.string.title_game, GameActivityCHGK.class)
+                new Sample(R.string.title_random_chgk, GameActivityCHGK.class),
+                new Sample(R.string.title_random_si, GameActivitySI.class)
         };
 
         ArrayAdapter<Sample> adapter = new ArrayAdapter<Sample>(this,
@@ -99,15 +86,29 @@ public class MainActivity extends ListActivity {
                 mSamples)
         {
             @Override
-            public View getView(int position, View convertView, ViewGroup parent)
+            public View getView(final int position, View convertView, ViewGroup parent)
             {
                 View view = super.getView(position, convertView, parent);
-                ImageButton ib = (ImageButton) view.findViewById(R.id.delete_button);
+                ImageButton ib = (ImageButton) view.findViewById(R.id.preference_button);
                 ib.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getApplicationContext(), RandomPreferenceActivity.class);
+                        Intent intent = null;
+                        switch (position) {
+                            case 0:
+                                intent = new Intent(getApplicationContext(), RandomCHGKPreferenceActivity.class);
+                                break;
+                            case 1:
+                                intent = new Intent(getApplicationContext(), RandomSIPreferenceActivity.class);
+                                break;
+                        }
                         startActivity(intent);
+                    }
+                });
+                ib.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return v.onTouchEvent(event);
                     }
                 });
                 return view;
@@ -122,9 +123,18 @@ public class MainActivity extends ListActivity {
     protected void onListItemClick(ListView listView, View view, int position, long id)
     {
         try {
-            if (isOnline()) {
-                DownloadRandomTask task = new DownloadRandomTask(this);
-                task.execute();
+            if (HelpMethods.isOnline(this))
+            {
+                switch (position) {
+                    case 0:
+                        DownloadRandomCHGKTask taskCHGK = new DownloadRandomCHGKTask(this, GameActivityCHGK.class);
+                        taskCHGK.execute();
+                        break;
+                    case 1:
+                        DownloadRandomSITask taskSI = new DownloadRandomSITask(this, GameActivitySI.class);
+                        taskSI.execute();
+
+                }
             }
             else
             {
@@ -136,154 +146,5 @@ public class MainActivity extends ListActivity {
             exception.printStackTrace();
         }
     }
-    public class DownloadRandomTask extends AsyncTask<Void, Void, Tour>
-    {
-        ProgressDialog pd;
-        Activity activity;
 
-        public DownloadRandomTask(Activity activity)
-        {
-            pd = new ProgressDialog(activity);
-            this.activity = activity;
-        }
-
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-            pd.setTitle("Случайный пакет ЧГК");
-            pd.setMessage("Загрузка пакета...");
-            pd.show();
-        }
-
-        @Override
-        protected Tour doInBackground(Void... params)
-        {
-            Tour tour = new Tour();
-            try
-            {
-                AppContext appContext = new AppContext();
-
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-                boolean isCustom = sp.getBoolean("dateSwitcher", false);
-                Integer complexity = Integer.parseInt(sp.getString("complexity", "1"));
-
-                String fromStr;
-                String toStr;
-                if (isCustom)
-                {
-                    fromStr = sp.getString("dateFrom", "1990.00.01");
-                    toStr = sp.getString("dateTo", "2015.00.01");
-                }
-                else
-                {
-                    fromStr = "1990.00.01";
-                    toStr = "2015.00.01";
-                }
-
-                SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
-                Date from = format.parse(fromStr);
-                Date to = format.parse(toStr);
-
-                tour = appContext.getRandomPackageCHGK(GameType.CHGK, from, to, complexity);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            return tour;
-        }
-
-        @Override
-        protected void onPostExecute(Tour result)
-        {
-            if (pd.isShowing())
-            {
-                pd.dismiss();
-            }
-
-            if (result == null || result.getQuestionsNum() == 0)
-            {
-                DownloadRandomTask task = new DownloadRandomTask(activity);
-                task.execute();
-                return;
-            }
-
-//            boolean neinteresno = true;
-//            for (Question question : tour.getQuestions())
-//            {
-//                neinteresno &= question.getPictureAnswer() == null;
-//            }
-//
-//            if (neinteresno)
-//            {
-//                DownloadRandomTask task = new DownloadRandomTask(activity);
-//                task.execute();
-//                return;
-//            }
-
-            DownloadTournamentRandomTask tournamentRandomTask = new DownloadTournamentRandomTask(activity, result);
-            tournamentRandomTask.execute();
-        }
-    }
-
-    public class DownloadTournamentRandomTask extends AsyncTask<Void, Void, Tournament>
-    {
-        ProgressDialog pd;
-        Tour tour;
-
-        public DownloadTournamentRandomTask(Activity activity, Tour tour)
-        {
-            pd = new ProgressDialog(activity);
-            this.tour = tour;
-        }
-
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-            pd.setTitle("Случайный пакет ЧГК");
-            pd.setMessage("Загрузка информации о турнире...");
-            pd.show();
-        }
-
-        @Override
-        protected Tournament doInBackground(Void... params)
-        {
-            Tournament tournament = null;
-            try {
-                AppContext appContext = new AppContext();
-                tournament = appContext.getTournamentByTourName(tour.getFileName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return tournament;
-        }
-
-        @Override
-        protected void onPostExecute(Tournament result)
-        {
-            if (pd.isShowing()) {
-                pd.dismiss();
-            }
-
-            Intent intent = new Intent(MainActivity.this, mSamples[0].activityClass);
-
-            intent.putExtra("tour", tour);
-            intent.putExtra("tournament", result);
-
-//            DataManager dataManager = new DataManager(getApplicationContext());
-//            dataManager.SaveTour(tour);
-//            Tour newTour = dataManager.LoadTour(tour.getTourId());
-
-            startActivity(intent);
-        }
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
 }

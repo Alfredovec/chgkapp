@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.SerializableEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import helpers.enums.GameType;
 import models.entities.Tour;
 import models.requests.RandomRequest;
 
@@ -19,9 +20,10 @@ public class ContextRandom
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost("http://kharkiv-trainss.rhcloud.com/chgkapp/");
         //HttpPost httppost = new HttpPost("http://178.150.137.228:8080/chgkapp/");
-
         httppost.setEntity(new SerializableEntity(request, false));
+
         String s = request.toString();
+
         httppost.setHeader("type", request.toString());
 
         HttpResponse response = httpclient.execute(httppost);
@@ -29,12 +31,7 @@ public class ContextRandom
 
         ObjectInputStream in = new ObjectInputStream(entity.getContent());
 
-        Tour resultTour = null;
-        try {
-            resultTour = (Tour) in.readObject();
-        } catch (Exception e) {
-            int a = 5;
-        }
+        Tour resultTour  = (Tour) in.readObject();
 
         in.close();
         return resultTour;

@@ -12,22 +12,17 @@ import helpers.DatePreference;
 import ru.chgkapp.R;
 
 /**
- * Created by Sergey on 01.02.2015.
+ * Created by Sergey on 28.02.2015.
  */
-public class RandomPreferenceActivity extends PreferenceActivity implements
+public class RandomSIPreferenceActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        PreferenceManager.setDefaultValues(this, R.xml.randompreference, false);
-        addPreferencesFromResource(R.xml.randompreference);
-
-        SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
-        ListPreference complexityPref = (ListPreference) findPreference("complexity");
-        complexityPref
-                .setSummary(complexityPref.getEntries()[Integer.parseInt(complexityPref.getValue())]);
+        PreferenceManager.setDefaultValues(this, R.xml.randompreferencesi, false);
+        addPreferencesFromResource(R.xml.randompreferencesi);
     }
 
     @Override
@@ -51,24 +46,19 @@ public class RandomPreferenceActivity extends PreferenceActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
         Preference pref = findPreference(key);
-        if (pref instanceof ListPreference)
-        {
-           ListPreference complexity = (ListPreference) pref;
-           pref.setSummary(complexity.getEntries()[Integer.parseInt(complexity.getValue())]);
-        }
-        else if (pref instanceof CheckBoxPreference)
+        if (pref instanceof CheckBoxPreference)
         {
             CheckBoxPreference checkBoxPreference = (CheckBoxPreference) pref;
             if (!checkBoxPreference.isChecked())
             {
-                ((DatePreference) findPreference("dateFrom")).setMinDefault();
-                ((DatePreference) findPreference("dateTo")).setMaxDefault();
+                ((DatePreference) findPreference("dateFromSI")).setMinDefault();
+                ((DatePreference) findPreference("dateToSI")).setMaxDefault();
             }
         }
         else if (pref instanceof DatePreference)
         {
-            DatePreference datePreferenceFrom = (DatePreference) findPreference("dateFrom");
-            DatePreference datePreferenceTo = (DatePreference) findPreference("dateTo");
+            DatePreference datePreferenceFrom = (DatePreference) findPreference("dateFromSI");
+            DatePreference datePreferenceTo = (DatePreference) findPreference("dateToSI");
 
             DatePreference datePreference = (DatePreference) pref;
             if (datePreference.getKey() == datePreferenceFrom.getKey())
@@ -81,8 +71,8 @@ public class RandomPreferenceActivity extends PreferenceActivity implements
 
     protected void resetTopLimit()
     {
-        DatePreference datePreferenceFrom = (DatePreference) findPreference("dateFrom");
-        DatePreference datePreferenceTo = (DatePreference) findPreference("dateTo");
+        DatePreference datePreferenceFrom = (DatePreference) findPreference("dateFromSI");
+        DatePreference datePreferenceTo = (DatePreference) findPreference("dateToSI");
         datePreferenceTo.setMinDate
                 (
                         datePreferenceFrom
@@ -94,8 +84,8 @@ public class RandomPreferenceActivity extends PreferenceActivity implements
 
     protected void resetBottomLimit()
     {
-        DatePreference datePreferenceFrom = (DatePreference) findPreference("dateFrom");
-        DatePreference datePreferenceTo = (DatePreference) findPreference("dateTo");
+        DatePreference datePreferenceFrom = (DatePreference) findPreference("dateFromSI");
+        DatePreference datePreferenceTo = (DatePreference) findPreference("dateToSI");
         datePreferenceFrom.setMaxDate
                 (
                         datePreferenceTo

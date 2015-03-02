@@ -1,30 +1,47 @@
 package activities.slideitems;
 
 import android.app.Fragment;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.io.Serializable;
+
+import activities.GameActivitySI;
 import fragments.AnswerFragment;
 import fragments.AnswerFragmentSI;
 import fragments.QuestionFragment;
 import fragments.QuestionFragmentSI;
+import helpers.Parser;
 import models.entities.Question;
+import models.entities.SvoyakTheme;
+import models.entities.Tour;
 import ru.chgkapp.R;
 
 /**
  * Created by Sergey on 18.02.2015.
  */
-public class GameSlideItemSI extends Fragment implements View.OnClickListener
+public class GameSlideItemSI extends Fragment implements View.OnClickListener, Parcelable
 {
     /**
      * The argument key for the page number this fragment represents.
      */
     public boolean mShowingBack = false;
-    private Question question;
+    public boolean[] whichAnswers;
+    public boolean isClassicView = true;
+    public int classicViewPageNum = 0;
+    public boolean allChecked = false;
+    public int questionsCount;
+
+    private SvoyakTheme theme;
+    private GameSlideItemSI slideItem;
     private ViewGroup rootView;
 
     public static final String ARG_PAGE = "page";
@@ -39,13 +56,13 @@ public class GameSlideItemSI extends Fragment implements View.OnClickListener
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
      */
-    public static GameSlideItemSI create(int pageNumber, int questionsNum, Question question)
+    public static GameSlideItemSI create(int pageNumber, int questionsNum, SvoyakTheme theme)
     {
         GameSlideItemSI fragment = new GameSlideItemSI();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, pageNumber);
         args.putInt(QUEST_NUM, questionsNum);
-        args.putSerializable("question", question);
+        args.putSerializable("theme", theme);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,11 +75,24 @@ public class GameSlideItemSI extends Fragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         mPageNumber = getArguments().getInt(ARG_PAGE);
         questionsNum = getArguments().getInt(QUEST_NUM);
-        question = (Question) getArguments().getSerializable("question");
+        theme = (SvoyakTheme) getArguments().getSerializable("theme");
 
+        questionsCount = Parser.parseQuestionsNum(theme);
+
+        whichAnswers = new boolean[10];
+        whichAnswers[0] = true;
+
+        setFront();
+
+    }
+
+    public void setFront()
+    {
         QuestionFragmentSI card = new QuestionFragmentSI();
         Bundle args = new Bundle();
-        args.putSerializable("question", question);
+        args.putSerializable("theme", theme);
+        //args.putSerializable("slide_item", this);
+        args.putParcelable("slide_item", this);
         card.setArguments(args);
 
         getChildFragmentManager()
@@ -82,13 +112,15 @@ public class GameSlideItemSI extends Fragment implements View.OnClickListener
         Button button = (Button) rootView.findViewById(R.id.buttonAnsQuestSI);
         button.setOnClickListener(this);
 
+        checkButtonVisibility();
+
         TextView twPrev = (TextView) rootView.findViewById(R.id.textViewPrevSI);
         if (mPageNumber > 1)
             twPrev.setText(String.valueOf(mPageNumber - 1));
         else twPrev.setVisibility(View.INVISIBLE);
 
         TextView twCurr = (TextView) rootView.findViewById(R.id.textViewCurrSI);
-        twCurr.setText("Вопрос " + String.valueOf(mPageNumber) + " из " + String.valueOf(questionsNum));
+        twCurr.setText(theme.getThemeName());
 
         TextView twNext = (TextView) rootView.findViewById(R.id.textViewNextSI);
         if (mPageNumber < questionsNum)
@@ -105,12 +137,27 @@ public class GameSlideItemSI extends Fragment implements View.OnClickListener
         return mPageNumber;
     }
 
+    public void checkButtonVisibility()
+    {
+        boolean visible = false;
+        for (int i = 0; i < whichAnswers.length; i++)
+            visible |= whichAnswers[i];
+        if (visible)
+            ((Button) rootView.findViewById(R.id.buttonAnsQuestSI)).setVisibility(View.VISIBLE);
+        else
+            ((Button) rootView.findViewById(R.id.buttonAnsQuestSI)).setVisibility(View.INVISIBLE);
+
+
+
+    }
     public void flipCard() {
         Fragment fragment;
         fragment = mShowingBack ? new QuestionFragmentSI() : new AnswerFragmentSI();
 
         Bundle args = new Bundle();
-        args.putSerializable("question", question);
+        args.putSerializable("theme", theme);
+        //args.putSerializable("slide_item", this);
+        args.putParcelable("slide_item", this);
         fragment.setArguments(args);
 
         // Flip to the back.
@@ -150,16 +197,38 @@ public class GameSlideItemSI extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v)
     {
-        switch (v.getId())
-        {
-            case R.id.buttonAnsQuestSI:
-                this.flipCard();
-                Button button = (Button) rootView.findViewById(R.id.buttonAnsQuestSI);
-                if (button.getText() == getResources().getString(R.string.to_answers))
-                    button.setText(getResources().getString(R.string.to_questions));
-                else
-                    button.setText(getResources().getString(R.string.to_answers));
+        try {
+            switch (v.getId())
+            {
+                case R.id.buttonAnsQuestSI:
+                        this.flipCard();
+                        Button button = (Button) rootView.findViewById(R.id.buttonAnsQuestSI);
+                        if (button.getText() == getResources().getString(R.string.to_answers)) {
+                            button.setText(getResources().getString(R.string.to_questions));
+                        }
+                        else
+                        {
+                            if (isClassicView && classicViewPageNum < 6)
+                                whichAnswers[++classicViewPageNum] = true;
+                            button.setText(getResources().getString(R.string.to_answers));
+                        }
+                    break;
+            }
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
         }
+    }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+        dest.writeBooleanArray(whichAnswers);
+        dest.writeValue(isClassicView);
+        dest.writeInt(classicViewPageNum);
     }
 }

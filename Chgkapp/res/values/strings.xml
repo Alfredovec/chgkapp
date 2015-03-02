@@ -19,7 +19,8 @@
     <!-- Titles -->
     <string name="app_name">ЧГКапп</string>
     <string name="title_template_step">Вопрос <xliff:g id="step_number">%1$d</xliff:g></string>
-    <string name="title_game">Случайный пакет ЧГК</string>
+    <string name="title_random_chgk">Случайный пакет Что? Где? Когда?</string>
+    <string name="title_random_si">Случайный пакет Своей Игры</string>
 
     <!-- Actions -->
 

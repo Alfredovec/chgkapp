@@ -4,20 +4,20 @@ package helpers;
 import java.util.ArrayList;
 
 import models.entities.Question;
+import models.entities.SvoyakTheme;
 
 /**
  * Created by Sergey on 17.02.2015.
  */
 public class Parser
 {
-    public static ArrayList<Question> parseSvoyakQuestions(Question theme)
+    public static ArrayList<Question> parseSvoyakQuestions(SvoyakTheme theme)
     {
         ArrayList<Question> questions = new ArrayList<Question>();
 
         String themeQuestions = theme.getQuestion();
         String themeAnswers = theme.getAnswer();
         String themeComments = theme.getComments();
-        String themeSources = theme.getSources();
 
         // Questions
         String temp = "";
@@ -86,29 +86,18 @@ public class Parser
             tempQuestion.setComments(temp);
         }
 
-        // Sources
-        temp = "";
-        currentNum = 1;
-        for (int i = 0; i < themeSources.length(); i++)
-        {
-            int digit = Character.getNumericValue(themeSources.charAt(i));
-            if (i < themeSources.length() - 3 &&
-                    digit > 1 &&
-                    themeSources.substring(i+1, i+3).compareTo(". ") == 0)
-            {
-                tempQuestion = questions.get(currentNum - 1);
-                tempQuestion.setSources(temp);
-                temp = "";
-                currentNum = digit;
-            }
-            temp += themeSources.charAt(i);
-        }
-        if (currentNum == questions.size())
-        {
-            tempQuestion = questions.get(questions.size() - 1);
-            tempQuestion.setSources(temp);
-        }
-
         return questions;
+    }
+
+    public static int parseQuestionsNum(SvoyakTheme theme)
+    {
+        int lastNum = -1;
+        for (int i = 0; i < theme.getAnswer().length() - 3; i++) {
+            char[] buf = new char[2];
+            theme.getAnswer().getChars(i+1, i+3, buf, 0);
+            if (buf[0] == '.' && buf[1] == ' ')
+                lastNum = Character.getNumericValue(theme.getAnswer().charAt(i));
+        }
+        return lastNum;
     }
 }

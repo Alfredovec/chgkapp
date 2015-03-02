@@ -24,14 +24,28 @@
         </activity>
 
         <activity android:name="activities.GameActivityCHGK"
-        android:label="@string/title_game"
+        android:label="@string/title_random_chgk"
         android:parentActivityName="activities.MainActivity"
         android:uiOptions="splitActionBarWhenNarrow">
         <meta-data android:name="android.support.PARENT_ACTIVITY"
             android:value="activities.MainActivity" />
         </activity>
 
-        <activity android:name="activities.preferences.RandomPreferenceActivity"
+        <activity android:name="activities.GameActivitySI"
+            android:label="@string/title_random_si"
+            android:parentActivityName="activities.MainActivity"
+            android:uiOptions="splitActionBarWhenNarrow">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="activities.MainActivity" />
+        </activity>
+
+        <activity android:name="activities.preferences.RandomCHGKPreferenceActivity"
+            android:parentActivityName="activities.MainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="activities.MainActivity" />
+        </activity>
+
+        <activity android:name="activities.preferences.RandomSIPreferenceActivity"
             android:parentActivityName="activities.MainActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value="activities.MainActivity" />

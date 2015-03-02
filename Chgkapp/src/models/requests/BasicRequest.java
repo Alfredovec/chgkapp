@@ -17,20 +17,7 @@ public abstract class BasicRequest implements Serializable
 
     public String toString()
     {
-        switch (this.type)
-        {
-            case BK:
-                return "BKRequest";
-            case CHGK:
-                return "CHGKRequest";
-            case BR:
-                return "BRRequest";
-            case SI:
-                return "SIRequest";
-            default:
-                return "Unknown";
-
-        }
+        return type.toString() + "Request";
     }
 
 	public Date getMinDate() 

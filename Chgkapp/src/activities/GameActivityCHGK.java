@@ -14,6 +14,7 @@ import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import activities.slideitems.GameSlideItemCHGK;
 import fragments.QuestionFragment;
@@ -49,35 +50,41 @@ public class GameActivityCHGK extends FragmentActivity
         mPager = (ViewPager) findViewById(R.id.game_pager);
         mPagerAdapter = new GamePagerAdapter(getFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            private int position;
             @Override
-            public void onPageSelected(int position)
-            {
-                if (currentItemNum != 0)
-                {
-                    Fragment fragment = mPagerAdapter.getRegisteredFragment(currentItemNum);
+            public void onPageScrolled(int i, float v, int i2) { }
 
-                    GameSlideItemCHGK item = (GameSlideItemCHGK) fragment;
-                    FragmentTransaction ft = item.getChildFragmentManager().beginTransaction();
+            @Override
+            public void onPageSelected(int i) { this.position = i; }
 
-                    QuestionFragment fragmentCard = new QuestionFragment();
-                    item.mShowingBack = false;
-                    Bundle args = new Bundle();
-                    args.putSerializable("question", tour.getQuestions().get(currentItemNum - 1));
-                    fragmentCard.setArguments(args);
+            @Override
+            public void onPageScrollStateChanged(int i) {
+                if (i == 0) {
+                    if (currentItemNum != 0) {
+                        Fragment fragment = mPagerAdapter.getRegisteredFragment(currentItemNum);
 
-                    ft.replace(R.id.answer_question_container, fragmentCard);
-                    ft.commit();
+                        GameSlideItemCHGK item = (GameSlideItemCHGK) fragment;
+                        FragmentTransaction ft = item.getChildFragmentManager().beginTransaction();
 
-                    item.InvalidateButton();
+                        QuestionFragment fragmentCard = new QuestionFragment();
+                        item.mShowingBack = false;
+                        Bundle args = new Bundle();
+                        args.putSerializable("question", tour.getQuestions().get(currentItemNum - 1));
+                        fragmentCard.setArguments(args);
+
+                        ft.replace(R.id.answer_question_container, fragmentCard);
+                        ft.commit();
+
+                        item.InvalidateButton();
+                    }
+
+                    currentItemNum = position % NUM_PAGES;
+
+                    invalidateOptionsMenu();
                 }
-
-                currentItemNum = position % NUM_PAGES;
-
-                invalidateOptionsMenu();
             }
         });
-
     }
 
     @Override
@@ -113,12 +120,6 @@ public class GameActivityCHGK extends FragmentActivity
             case R.id.action_next:
                 mPager.setCurrentItem(mPager.getCurrentItem() + 1);
                 return true;
-
-//            case R.id.action_answer:
-//                Fragment fragment = mPagerAdapter.getRegisteredFragment(mPager.getCurrentItem());
-//                GameSlideItem GSItem = (GameSlideItem) fragment;
-//                GSItem.flipCard();
-//                return true;
         }
         return super.onOptionsItemSelected(item);
     }

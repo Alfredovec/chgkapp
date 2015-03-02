@@ -23,7 +23,7 @@ public class Tour implements Serializable
 
     private String fileName;
 
-    private ArrayList<Question> questions;
+    private ArrayList<? extends Question> questions;
 
     public Tour() {
             questions = new ArrayList<Question>();
@@ -93,15 +93,11 @@ public class Tour implements Serializable
             this.fileName = fileName;
     }
 
-    public ArrayList<Question> getQuestions() {
+    public ArrayList<? extends Question> getQuestions() {
             return questions;
     }
 
-    public void setQuestions(ArrayList<Question> questions) {
+    public void setQuestions(ArrayList<? extends Question> questions) {
             this.questions = questions;
-    }
-
-    public void addQ(Question q) {
-            questions.add(q);
     }
 }

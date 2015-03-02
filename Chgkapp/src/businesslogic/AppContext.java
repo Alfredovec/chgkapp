@@ -13,7 +13,7 @@ import models.requests.RandomRequest;
  */
 public class AppContext
 {
-    public Tour getRandomPackageCHGK(GameType type, Date from, Date to, int complexity) throws IOException, ClassNotFoundException
+    public Tour getRandomPackage(GameType type, Date from, Date to, int complexity) throws IOException, ClassNotFoundException
     {
         ContextRandom contextRandomCHGK = new ContextRandom();
         return contextRandomCHGK.get(new RandomRequest(type, from, to, complexity, 5, 25));

@@ -18,6 +18,7 @@ import activities.slideitems.GameSlideItemCHGK;
 import activities.slideitems.GameSlideItemSI;
 import fragments.QuestionFragment;
 import fragments.QuestionFragmentSI;
+import models.entities.SvoyakTheme;
 import models.entities.Tour;
 import models.entities.Tournament;
 import ru.chgkapp.R;
@@ -52,35 +53,49 @@ public class GameActivitySI extends FragmentActivity
         mPager = (ViewPager) findViewById(R.id.game_pager);
         mPagerAdapter = new GamePagerAdapter(getFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            private int position;
             @Override
-            public void onPageSelected(int position)
-            {
-                if (currentItemNum != 0)
-                {
-                    Fragment fragment = mPagerAdapter.getRegisteredFragment(currentItemNum);
+            public void onPageScrolled(int i, float v, int i2) { }
 
-                    GameSlideItemCHGK item = (GameSlideItemCHGK) fragment;
-                    FragmentTransaction ft = item.getChildFragmentManager().beginTransaction();
+            @Override
+            public void onPageSelected(int i) { this.position = i; }
 
-                    QuestionFragmentSI fragmentCard = new QuestionFragmentSI();
-                    item.mShowingBack = false;
-                    Bundle args = new Bundle();
-                    args.putSerializable("question", tour.getQuestions().get(currentItemNum - 1));
-                    fragmentCard.setArguments(args);
+            @Override
+            public void onPageScrollStateChanged(int i) {
+                try {
+                    if (i == 0) {
+                        if (currentItemNum != 0) {
+                            Fragment fragment = mPagerAdapter.getRegisteredFragment(currentItemNum);
 
-                    ft.replace(R.id.answer_question_container_si, fragmentCard);
-                    ft.commit();
+                            GameSlideItemSI item = (GameSlideItemSI) fragment;
+                            FragmentTransaction ft = item.getChildFragmentManager().beginTransaction();
 
-                    item.InvalidateButton();
+                            QuestionFragmentSI fragmentCard = new QuestionFragmentSI();
+                            item.mShowingBack = false;
+                            Bundle args = new Bundle();
+                            args.putSerializable("theme", tour.getQuestions().get(currentItemNum - 1));
+//                            args.putSerializable("slide_item", item);
+                            args.putParcelable("slide_item", item);
+                            fragmentCard.setArguments(args);
+
+                            ft.replace(R.id.answer_question_container_si, fragmentCard);
+                            ft.commit();
+
+                            item.InvalidateButton();
+                        }
+
+                        currentItemNum = position % NUM_PAGES;
+
+                        invalidateOptionsMenu();
+                    }
                 }
-
-                currentItemNum = position % NUM_PAGES;
-
-                invalidateOptionsMenu();
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
-
     }
 
     @Override
@@ -135,7 +150,7 @@ public class GameActivitySI extends FragmentActivity
             if (position == 0)
                 return TournamentInfoItem.create(tournament);
             else
-                return GameSlideItemSI.create(position, NUM_PAGES - 1, tour.getQuestions().get(position - 1));
+                return GameSlideItemSI.create(position, NUM_PAGES - 1, (SvoyakTheme)tour.getQuestions().get(position - 1));
         }
 
         @Override
